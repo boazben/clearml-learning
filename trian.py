@@ -6,12 +6,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+from clearml import Task, Logger
+
+task = Task.init(
+    project_name="ClearML Learning",
+    task_name="tabular training example",
+    task_type=Task.TaskTypes.training,
+)
+
 # --- פרמטרים ---
 params = {
     "n_estimators": 100,  # כמה עצים ביער
     "max_depth": 5,       # עד כמה עמוק כל עץ
     "random_state": 42,   # seed לשחזוריות
 }
+params = task.connect(params)
 
 # --- דאטה ---
 iris = load_iris()
@@ -29,11 +38,37 @@ y_pred = model.predict(X_test)
 acc = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {acc:.4f}")
 
+logger = Logger.current_logger() 
+logger.report_scalar(title="Accuracy", series="test", value=acc, iteration=0)
+
 # --- Confusion Matrix ---
 cm = confusion_matrix(y_test, y_pred)
+logger.report_confusion_matrix(
+    title="Confusion Matrix",
+    series="test",
+    matrix=cm,
+    iteration=0,
+    xaxis=list(iris.target_names),
+    yaxis=list(iris.target_names),
+)
+
+importances = model.feature_importances_
 plt.figure(figsize=(6, 4))
 sns.heatmap(cm, annot=True, fmt="d", xticklabels=iris.target_names, yticklabels=iris.target_names)
-plt.title("Confusion Matrix")
+plt.title("Feature Importance")
 plt.tight_layout()
-plt.savefig("confusion_matrix.png")
-plt.show()
+
+logger.report_matplotlib_figure(
+    title="Feature Importance",
+    series="train",
+    figure=plt.gcf(),
+    iteration=0,
+)
+
+import pickle
+with open("model.pkl", "wb") as f:
+    pickle.dump(model, f)
+
+task.upload_artifact(name="random-forest-model", artifact_object="model.pkl")
+
+print("Done! Check your ClearML UI.")
