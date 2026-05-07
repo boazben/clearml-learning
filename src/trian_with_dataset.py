@@ -7,11 +7,17 @@ import pickle
 
 task = Task.init(
     project_name="ClearML Learning",
-    task_name="training with dataset example",
+    task_name="add more data for improved accuracy",
     task_type=Task.TaskTypes.training,
 )
 
-dataset = Dataset.get(dataset_name="people-dataset", dataset_project="ClearML Learning")
+task.set_parent("238b9377421b4205b3cce3a4cedea742")
+
+dataset = Dataset.get(
+    dataset_name="more data to train",
+    dataset_project="ClearML Learning",
+    alias="training-data"
+    )
 local_path = dataset.get_local_copy()
 print(f"Dataset local path: {local_path}")
 

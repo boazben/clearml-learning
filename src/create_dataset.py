@@ -31,5 +31,5 @@ print(f"Dataset created and uploaded successfully! ID: {dataset.id}")
 
 # # Example usage:
 # # To create a dataset with files to add:
-# # python src/create_dataset.py --n "multiple parents v2" --p f213cc06dae649b487c0160cfab09e2f 05d94801f3484a5cabb1536e1fbdb38f 9a1a85f3467f46f8a7084be71f5c6691 --a data/raw/people_v3.csv data/raw/people_v4.csv
+# # python src/create_dataset.py --n "more data to train" --p   ed617a76beab45d586cd4d9b44d3c59a --a data/raw/people_v1.csv
 
